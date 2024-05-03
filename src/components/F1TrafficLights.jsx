@@ -1,9 +1,11 @@
 "use client";
 import React, {useState, useEffect, useRef} from 'react';
+import ResultCard from "@/components/ResultCard";
 
 const Separator = () => <div className="w-3 h-7 bg-gray-950"/>;
 
-const Light = ({color}) => (<div style={{backgroundColor: color}} className="w-10 md:w-15 lg:w-20 h-10 md:h-15 lg:h-20 rounded-full m-1"></div>);
+const Light = ({color}) => (<div style={{backgroundColor: color}}
+                                 className="w-10 md:w-15 lg:w-20 h-10 md:h-15 lg:h-20 rounded-full m-1"></div>);
 
 const TrafficLight = ({isOn}) => {
     const colors = isOn ? ['#454545', '#454545', '#FF0000', '#FF0000'] : ['#454545', '#454545', '#454545', '#454545'];
@@ -73,7 +75,7 @@ const F1TrafficLights = () => {
             }
 
         } else {
-            setPlaceholder("JUMP START!");
+            setPlaceholder("JUMPSTART!");
         }
         setCurrentLight(0);
         setLightsOffTime(null);
@@ -106,7 +108,8 @@ const F1TrafficLights = () => {
 
 
     return (<div className="flex flex-col items-center justify-center">
-        <p className="mt-6 w-2/3 text-m text-center font-normal mb-6">Click or tap anywhere on the screen to start. Click again when
+        <p className="mt-6 w-3/4 text-m text-center font-normal mb-6">Click or tap anywhere on the screen to start.
+            Click again when
             lights go off.
         </p>
         <div className="flex items-center justify-center">
@@ -115,9 +118,12 @@ const F1TrafficLights = () => {
                 {index !== 4 && <Separator/>}
             </React.Fragment>))}
         </div>
-        {placeholder &&
-            <p className={`mt-6 w-3/4 text-4xl lg:text-6xl text-center font-semibold ${textChanged ? 'transform transition-transform duration-200 scale-110' : ''}`}>{placeholder}</p>}
-        <p className="mt-6 text-xl font-normal">Best score: {bestTime ? bestTime : '-'}</p>
+        {/*{placeholder &&*/}
+        {/*    <p className={`mt-6 w-3/4 text-4xl lg:text-6xl text-center font-semibold ${textChanged ? 'transform transition-transform duration-200 scale-110' : ''}`}>{placeholder}</p>}*/}
+        {/*<p className="mt-6 text-xl font-normal">Best score: {bestTime ? bestTime : '-'}</p>*/}
+        <div className="mt-5">
+            <ResultCard result={placeholder} best={bestTime}/>
+        </div>
     </div>);
 };
 
