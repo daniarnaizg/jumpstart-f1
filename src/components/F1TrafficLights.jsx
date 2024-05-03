@@ -3,7 +3,7 @@ import React, {useState, useEffect, useRef} from 'react';
 
 const Separator = () => <div className="w-3 h-7 bg-gray-950"/>;
 
-const Light = ({color}) => (<div style={{backgroundColor: color}} className="w-16 h-16 rounded-full m-1"></div>);
+const Light = ({color}) => (<div style={{backgroundColor: color}} className="w-10 md:w-15 lg:w-20 h-10 md:h-15 lg:h-20 rounded-full m-1"></div>);
 
 const TrafficLight = ({isOn}) => {
     const colors = isOn ? ['#454545', '#454545', '#FF0000', '#FF0000'] : ['#454545', '#454545', '#454545', '#454545'];
@@ -21,7 +21,13 @@ const F1TrafficLights = () => {
     const [intervalId, setIntervalId] = useState(null);
     const [lightsStarted, setLightsStarted] = useState(false);
     const [textChanged, setTextChanged] = useState(false);
-    const [bestTime, setBestTime] = useState(localStorage.getItem('bestTime') || null);
+
+    const [bestTime, setBestTime] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('bestTime') || null;
+        }
+        return null;
+    });
 
     useEffect(() => {
         return () => clearInterval(intervalId);
@@ -61,7 +67,9 @@ const F1TrafficLights = () => {
 
             if (bestTime === null || formattedTimeDiff < bestTime) {
                 setBestTime(formattedTimeDiff);
-                localStorage.setItem('bestTime', formattedTimeDiff); // Add this line
+                if (typeof window !== 'undefined') {
+                    localStorage.setItem('bestTime', formattedTimeDiff); // Add this line
+                }
             }
 
         } else {
