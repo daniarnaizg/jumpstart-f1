@@ -3,20 +3,14 @@ import React, {useState, useEffect, useRef} from 'react';
 
 const Separator = () => <div className="w-3 h-7 bg-gray-950"/>;
 
-const Light = ({color}) => (
-    <div style={{backgroundColor: color}} className="w-10 h-10 rounded-full m-1"></div>
-);
+const Light = ({color}) => (<div style={{backgroundColor: color}} className="w-16 h-16 rounded-full m-1"></div>);
 
 const TrafficLight = ({isOn}) => {
     const colors = isOn ? ['#454545', '#454545', '#FF0000', '#FF0000'] : ['#454545', '#454545', '#454545', '#454545'];
 
-    return (
-        <div className="flex flex-col items-center justify-center px-1 py-2 bg-gray-950 rounded-xl">
-            {colors.map((color, index) => (
-                <Light key={index} color={color}/>
-            ))}
-        </div>
-    );
+    return (<div className="flex flex-col items-center justify-center px-1 py-2 bg-gray-950 rounded-xl">
+        {colors.map((color, index) => (<Light key={index} color={color}/>))}
+    </div>);
 };
 
 const F1TrafficLights = () => {
@@ -27,6 +21,7 @@ const F1TrafficLights = () => {
     const [intervalId, setIntervalId] = useState(null);
     const [lightsStarted, setLightsStarted] = useState(false);
     const [textChanged, setTextChanged] = useState(false);
+    const [bestTime, setBestTime] = useState(localStorage.getItem('bestTime') || null);
 
     useEffect(() => {
         return () => clearInterval(intervalId);
@@ -37,19 +32,20 @@ const F1TrafficLights = () => {
         setLightsOffTime(null);
         setTimeDifference(null);
         setPlaceholder("0.000"); // Reset the placeholder
-        let light = 0;
+        let light = 1; // Start from 1
+        setCurrentLight(light); // Immediately turn on the first light
         const id = setInterval(() => {
             light++;
             setCurrentLight(light);
             if (light >= 5) {
                 clearInterval(id);
-                const randomDelay = Math.floor(Math.random() * (5400 - 800 + 1)) + 800;
+                const randomDelay = Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000;
                 setTimeout(() => {
                     setCurrentLight(0);
                     setLightsOffTime(Date.now());
                 }, randomDelay);
             }
-        }, 1000);
+        }, 700);
         setIntervalId(id);
         setTextChanged(true);
         setTimeout(() => setTextChanged(false), 200); // Reset after 200ms
@@ -62,6 +58,12 @@ const F1TrafficLights = () => {
             const formattedTimeDiff = timeDiff.toFixed(3); // Format to xxx.xxx
             setTimeDifference(formattedTimeDiff);
             setPlaceholder(formattedTimeDiff);
+
+            if (bestTime === null || formattedTimeDiff < bestTime) {
+                setBestTime(formattedTimeDiff);
+                localStorage.setItem('bestTime', formattedTimeDiff); // Add this line
+            }
+
         } else {
             setPlaceholder("JUMP START!");
         }
@@ -95,19 +97,20 @@ const F1TrafficLights = () => {
     }, []); // Empty dependency array ensures this runs once on mount and cleanup on unmount
 
 
-    return (
-        <div className="flex flex-col items-center justify-center">
-            <div className="flex items-center justify-center">
-                {[...Array(5).keys()].map((index) => (
-                    <React.Fragment key={index}>
-                        <TrafficLight isOn={currentLight >= index + 1}/>
-                        {index !== 4 && <Separator/>}
-                    </React.Fragment>
-                ))}
-            </div>
-            {placeholder && <p className={`mt-6 text-7xl font-semibold ${textChanged ? 'transform transition-transform duration-200 scale-110' : ''}`}>{placeholder}</p>}
+    return (<div className="flex flex-col items-center justify-center">
+        <p className="mt-6 text-m font-normal mb-6">Click or tap anywhere on the screen to start. Click again when
+            lights go off.
+        </p>
+        <div className="flex items-center justify-center">
+            {[...Array(5).keys()].map((index) => (<React.Fragment key={index}>
+                <TrafficLight isOn={currentLight >= index + 1}/>
+                {index !== 4 && <Separator/>}
+            </React.Fragment>))}
         </div>
-    );
+        {placeholder &&
+            <p className={`mt-6 text-7xl font-semibold ${textChanged ? 'transform transition-transform duration-200 scale-110' : ''}`}>{placeholder}</p>}
+        <p className="mt-6 text-xl font-normal">Best score: {bestTime ? bestTime : '-'}</p>
+    </div>);
 };
 
 export default F1TrafficLights;
