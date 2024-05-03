@@ -2,10 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+@font-face {
+  font-family: 'Formula1-Bold';
+  src: url('../assets/fonts/Formula1-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Formula1-Regular';
+  src: url('../assets/fonts/Formula1-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Formula1-Wide';
+  src: url('../assets/fonts/Formula1-Wide.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Formula1-Black';
+    src: url('../assets/fonts/Formula1-Black.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+body {
+  background-color: #15151e;
 }
 
 .transition-transform {
