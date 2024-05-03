@@ -106,7 +106,7 @@ const F1TrafficLights = () => {
 
 
     return (<div className="flex flex-col items-center justify-center">
-        <p className="mt-6 text-m font-normal mb-6">Click or tap anywhere on the screen to start. Click again when
+        <p className="mt-6 w-2/3 text-m text-center font-normal mb-6">Click or tap anywhere on the screen to start. Click again when
             lights go off.
         </p>
         <div className="flex items-center justify-center">
@@ -116,7 +116,7 @@ const F1TrafficLights = () => {
             </React.Fragment>))}
         </div>
         {placeholder &&
-            <p className={`mt-6 text-7xl font-semibold ${textChanged ? 'transform transition-transform duration-200 scale-110' : ''}`}>{placeholder}</p>}
+            <p className={`mt-6 w-3/4 text-4xl lg:text-6xl text-center font-semibold ${textChanged ? 'transform transition-transform duration-200 scale-110' : ''}`}>{placeholder}</p>}
         <p className="mt-6 text-xl font-normal">Best score: {bestTime ? bestTime : '-'}</p>
     </div>);
 };
