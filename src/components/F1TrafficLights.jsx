@@ -111,7 +111,7 @@ const F1TrafficLights = () => {
     }, []); // Empty dependency array ensures this runs once on mount and cleanup on unmount
 
 
-    return (<div className="flex flex-col items-center">
+    return (<div className="flex flex-col items-center pt-20">
         <p className="w-3/4 text-m text-center font-formula1-regular text-gray-200 mb-6">Click or tap anywhere on the screen to start.
             Click again when
             lights go off.
