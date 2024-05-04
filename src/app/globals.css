@@ -29,11 +29,3 @@
     font-weight: bold;
     font-style: normal;
 }
-
-body {
-  background-color: #15151e;
-}
-
-.transition-transform {
-  transition: transform 200ms;
-}

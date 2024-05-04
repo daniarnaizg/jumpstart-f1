@@ -1,31 +1,24 @@
 "use client";
 import React, {useState, useEffect, useRef} from 'react';
+import TrafficLight from './TrafficLight';
 import ResultCard from "@/components/ResultCard";
+
+const LIGHTS_COUNT = 5;
+const LIGHT_INTERVAL = 700;
+const MIN_DELAY = 1000;
+const MAX_DELAY = 5000;
 
 const Separator = () => <div className="w-3 h-7 bg-gray-950"/>;
 
-const Light = ({color}) => (<div style={{backgroundColor: color}}
-                                 className="w-10 md:w-15 lg:w-16 h-10 md:h-15 lg:h-16 rounded-full m-1"></div>);
-
-const TrafficLight = ({isOn}) => {
-    const colors = isOn ? ['#454545', '#454545', '#FF0000', '#FF0000'] : ['#454545', '#454545', '#454545', '#454545'];
-
-    return (<div className="flex flex-col items-center justify-center px-1 py-2 bg-gray-950 rounded-xl">
-        {colors.map((color, index) => (<Light key={index} color={color}/>))}
-    </div>);
-};
-
 const F1TrafficLights = () => {
-    const [placeholder, setPlaceholder] = useState("0.000");
+    const [result, setResult] = useState("0.000");
     const [currentLight, setCurrentLight] = useState(0);
     const [lightsOffTime, setLightsOffTime] = useState(null);
     const [timeDifference, setTimeDifference] = useState(null);
     const [intervalId, setIntervalId] = useState(null);
     const [lightsStarted, setLightsStarted] = useState(false);
-    const [textChanged, setTextChanged] = useState(false);
 
     const [bestTime, setBestTime] = useState(null);
-
     useEffect(() => {
         return () => clearInterval(intervalId);
     }, [intervalId]);
@@ -39,53 +32,54 @@ const F1TrafficLights = () => {
         }
     }, []);
 
+    const clearAndSetInterval = (id) => {
+        clearInterval(intervalId);
+        setIntervalId(id);
+    };
+
     const startLights = () => {
         setCurrentLight(0);
         setLightsOffTime(null);
         setTimeDifference(null);
-        setPlaceholder("0.000"); // Reset the placeholder
         let light = 1; // Start from 1
         setCurrentLight(light); // Immediately turn on the first light
         const id = setInterval(() => {
             light++;
             setCurrentLight(light);
-            if (light >= 5) {
-                clearInterval(id);
-                const randomDelay = Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000;
+            if (light >= LIGHTS_COUNT) {
+                clearAndSetInterval(null);
+                const randomDelay = Math.floor(Math.random() * (MAX_DELAY - MIN_DELAY + 1)) + MIN_DELAY;
                 setTimeout(() => {
                     setCurrentLight(0);
                     setLightsOffTime(Date.now());
                 }, randomDelay);
             }
-        }, 700);
-        setIntervalId(id);
-        setTextChanged(true);
-        setTimeout(() => setTextChanged(false), 200); // Reset after 200ms
+        }, LIGHT_INTERVAL);
+        clearAndSetInterval(id);
     };
 
     const measureTime = () => {
-        clearInterval(intervalId);
+        clearAndSetInterval(null);
         if (lightsOffTime) {
-            const timeDiff = (Date.now() - lightsOffTime) / 1000; // Convert to seconds
-            const formattedTimeDiff = timeDiff.toFixed(3); // Format to xxx.xxx
+            const timeDiff = (Date.now() - lightsOffTime) / 1000;
+            const formattedTimeDiff = timeDiff.toFixed(3);
             setTimeDifference(formattedTimeDiff);
-            setPlaceholder(formattedTimeDiff);
+            setResult(formattedTimeDiff);
 
             if (bestTime === null || formattedTimeDiff < bestTime) {
                 setBestTime(formattedTimeDiff);
                 if (typeof window !== 'undefined') {
-                    localStorage.setItem('bestTime', formattedTimeDiff); // Add this line
+                    localStorage.setItem('bestTime', formattedTimeDiff);
                 }
             }
 
         } else {
-            setPlaceholder("JUMPSTART!");
+            setResult("JUMPSTART!");
         }
         setCurrentLight(0);
         setLightsOffTime(null);
-        setTextChanged(true);
-        setTimeout(() => setTextChanged(false), 200); // Reset after 200ms
     };
+
     const handleClick = () => {
         if (!lightsStarted) {
             startLights();
@@ -112,18 +106,19 @@ const F1TrafficLights = () => {
 
 
     return (<div className="flex flex-col items-center pt-20">
-        <p className="w-3/4 text-m text-center font-formula1-regular text-gray-200 mb-6">Click or tap anywhere on the screen to start.
+        <p className="w-3/4 text-m text-center font-formula1-regular text-gray-200 mb-6">Click or tap anywhere on the
+            screen to start.
             Click again when
             lights go off.
         </p>
         <div className="flex items-center justify-center">
-            {[...Array(5).keys()].map((index) => (<React.Fragment key={index}>
+            {[...Array(LIGHTS_COUNT).keys()].map((index) => (<React.Fragment key={index}>
                 <TrafficLight isOn={currentLight >= index + 1}/>
-                {index !== 4 && <Separator/>}
+                {index !== LIGHTS_COUNT - 1 && <Separator/>}
             </React.Fragment>))}
         </div>
         <div className="mt-10">
-            <ResultCard result={placeholder} best={bestTime}/>
+            <ResultCard result={result} best={bestTime}/>
         </div>
     </div>);
 };
